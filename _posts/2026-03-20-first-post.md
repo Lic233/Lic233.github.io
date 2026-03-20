@@ -5,10 +5,10 @@ date: 2026-03-20
 
 # 基于 GitHub Pages 与 Jekyll 的博客网站搭建
 
-实验内容与步骤：
-GitHub Pages 是 GitHub 提供的一项静态网站托管服务，可以将仓库中的网页文件自动部署为可访问的网站。<br>
-Jekyll 是 GitHub官方支持的一个静态博客框架，使用过程中无需自己部署，GitHub会自动编译。<br>
-部署博客网站流程如下：<br>
+实验内容与步骤：<br><br>
+GitHub Pages 是 GitHub 提供的一项静态网站托管服务，可以将仓库中的网页文件自动部署为可访问的网站。<br><br>
+Jekyll 是 GitHub官方支持的一个静态博客框架，使用过程中无需自己部署，GitHub会自动编译。<br><br>
+部署博客网站流程如下：<br><br>
 1.创建GitHub仓库。<br>
   在GitHub上创建名为用户名.github.io的仓库，GitHub通过该命名规则来生成个人主页。<br>
 2.配置 Jekyll 环境。<br>
