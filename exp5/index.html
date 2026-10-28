@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>校园电动车充电桩预约与共享平台 · 数据分析</title>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --card:#ffffff;
+    --text:#1a1a1a;
+    --muted:#5b6472;
+    --line:#e3e6ec;
+    --accent:#2563eb;
+    --accent-soft:#eaf1fe;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;
+    font-size:16px;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px;}
+
+  /* 顶部 */
+  header.hero{background:var(--card);border-bottom:1px solid var(--line);padding:56px 0 40px;}
+  .eyebrow{
+    display:inline-block;font-size:13px;letter-spacing:.08em;color:var(--accent);
+    background:var(--accent-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px;
+  }
+  header.hero h1{margin:0 0 10px;font-size:30px;line-height:1.4;font-weight:700;}
+  header.hero .sub{margin:0;color:var(--muted);font-size:18px;}
+
+  /* 导航 */
+  nav.toc{
+    position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+  }
+  nav.toc .wrap{display:flex;gap:26px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;}
+  nav.toc a{
+    color:var(--muted);text-decoration:none;font-size:14px;
+    padding-bottom:2px;border-bottom:2px solid transparent;
+  }
+  nav.toc a:hover{color:var(--accent);border-bottom-color:var(--accent);}
+
+  /* 主体 */
+  main{padding:36px 0 64px;}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:28px 30px;margin-bottom:22px;
+  }
+  h2{font-size:20px;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+  h3{font-size:17px;margin:26px 0 10px;}
+  h3:first-of-type{margin-top:0;}
+  p{margin:0 0 14px;text-align:justify;}
+  p:last-child{margin-bottom:0;}
+
+  /* 数据卡 */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0 4px;}
+  .stat{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:#fcfcfd;}
+  .stat .num{font-size:24px;font-weight:700;color:var(--accent);line-height:1.3;}
+  .stat .label{font-size:13px;color:var(--muted);}
+
+  /* 进度条 */
+  .bars{margin:14px 0 4px;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .bar-row .name{flex:0 0 150px;font-size:14px;color:var(--muted);}
+  .bar-track{flex:1;height:10px;background:#eef0f4;border-radius:999px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--accent);border-radius:999px;}
+  .bar-row .val{flex:0 0 96px;text-align:right;font-size:14px;font-variant-numeric:tabular-nums;}
+
+  /* 图片 */
+  figure{margin:20px 0 4px;}
+  figure img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;background:#fff;}
+  figcaption{font-size:13px;color:var(--muted);margin-top:10px;text-align:center;}
+
+  /* 列表 */
+  ol.points,ul.points{margin:12px 0 0;padding-left:22px;}
+  ol.points li,ul.points li{margin-bottom:12px;}
+  ol.points li:last-child,ul.points li:last-child{margin-bottom:0;}
+  ol.points li strong,ul.points li strong{color:#111;}
+
+  .quote{
+    border-left:3px solid var(--accent);background:#fafcff;padding:12px 16px;
+    border-radius:0 6px 6px 0;margin:16px 0 0;color:#2f3b4d;font-size:15px;
+  }
+
+  /* 亲和图步骤 */
+  .step{margin-top:28px;}
+  .step:first-of-type{margin-top:18px;}
+  .step-no{
+    display:inline-block;font-size:12px;font-weight:700;color:var(--accent);
+    background:var(--accent-soft);border-radius:4px;padding:2px 8px;margin-right:8px;
+    vertical-align:2px;
+  }
+  .step-title{font-size:16px;font-weight:700;}
+
+  /* 表格 */
+  .table-scroll{overflow-x:auto;margin-top:16px;}
+  table{width:100%;border-collapse:collapse;font-size:15px;min-width:520px;}
+  th,td{border:1px solid var(--line);padding:10px 14px;text-align:left;vertical-align:top;}
+  thead th{background:#f3f5f8;font-weight:700;white-space:nowrap;}
+  tbody td:nth-child(2){text-align:center;white-space:nowrap;color:var(--accent);font-weight:700;}
+
+  /* 启示卡 */
+  .insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px;}
+  .insight{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:#fcfcfd;}
+  .insight .idx{
+    display:block;width:22px;height:22px;line-height:22px;text-align:center;
+    background:var(--accent);color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-bottom:8px;
+  }
+  .insight p{margin:0;font-size:14.5px;line-height:1.7;}
+
+  footer{border-top:1px solid var(--line);background:var(--card);padding:24px 0;color:var(--muted);font-size:13px;text-align:center;}
+
+  @media (max-width:600px){
+    header.hero{padding:36px 0 28px;}
+    header.hero h1{font-size:24px;}
+    section{padding:22px 18px;}
+    .bar-row .name{flex:0 0 84px;}
+    .bar-row .val{flex:0 0 76px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">人机交互实验课作业 5 · 数据分析</span>
+    <h1>校园电动车充电桩预约与共享平台</h1>
+    <p class="sub">基于「问卷 + 访谈」混合方法的用户需求研究</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#s1">一、研究概况与思路</a>
+    <a href="#s2">二、调查问卷数据分析</a>
+    <a href="#s3">三、访谈与亲和图</a>
+    <a href="#s4">四、数据总结</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- 一 -->
+  <section id="s1">
+    <h2>一、研究概况与数据分析思路</h2>
+    <p>本项目致力于打造一款面向全校师生的「校园电动车充电桩预约与共享平台」。为理解用户真实的充电处境，本研究采用「问卷 + 访谈」的混合方法：先以问卷获取可量化的行为分布与态度倾向，再用访谈解释数字背后的动机与情绪。</p>
+    <p>问卷涵盖<strong>基本信息、充电行为、痛点体验与需求意愿</strong>四个维度；访谈对象为几位电动车用户，围绕「最近一次充电的完整过程」追问事件细节、情绪感受与深层需求。</p>
+  </section>
+
+  <!-- 二 -->
+  <section id="s2">
+    <h2>二、调查问卷数据分析</h2>
+
+    <h3>用户基本信息</h3>
+    <div class="stats">
+      <div class="stat"><div class="num">81%</div><div class="label">本科生（研究生 19%）</div></div>
+      <div class="stat"><div class="num">62%</div><div class="label">男性（女性 38%）</div></div>
+    </div>
+    <ul class="points">
+      <li><strong>身份：</strong>81% 本科生，19% 研究生。</li>
+      <li><strong>性别：</strong>62% 男，38% 女。</li>
+    </ul>
+
+    <h3>充电行为的三个特征</h3>
+
+    <p><strong>（1）频率中低，但每一次都是「刚需」</strong></p>
+    <p>69% 的用户每周充电少于 2 次，31% 为每周 2–4 次，没有每周 5 次以上的高频用户。这说明充电桩的「总量」并非完全不够，真正的问题在于「可靠性」——因为充电频次低，用户没有试错空间，一次充不上就意味着第二天的通勤被打断。</p>
+
+    <p><strong>（2）时段高度集中，供需在时间上错位</strong></p>
+    <p>充电时段呈现明显的晚高峰聚集：21–23 点占比最高，其次是 17–19 点下课时段与 11–13 点午休，7–9 点晨间最低。这种高度集中的时段分布，是排队与无桩可用的直接原因：桩的总量也许够，但在 21 点之后被瞬时抢占。这属于<strong>峰值缺口</strong>，而不是总量缺口，因此更有效的干预是削弱高峰与预约，而不是单纯增加桩的数量。</p>
+    <div class="bars">
+      <div class="bar-row"><span class="name">7–9 点</span><span class="bar-track"><span class="bar-fill" style="width:31%"></span></span><span class="val">4 人 / 31%</span></div>
+      <div class="bar-row"><span class="name">11–13 点</span><span class="bar-track"><span class="bar-fill" style="width:38%"></span></span><span class="val">5 人 / 38%</span></div>
+      <div class="bar-row"><span class="name">17–19 点</span><span class="bar-track"><span class="bar-fill" style="width:46%"></span></span><span class="val">6 人 / 46%</span></div>
+      <div class="bar-row"><span class="name">21–23 点</span><span class="bar-track"><span class="bar-fill" style="width:77%"></span></span><span class="val">10 人 / 77%</span></div>
+    </div>
+
+    <p><strong>（3）月支出低，价格高度敏感</strong></p>
+    <p>92% 的用户每月充电花费低于 10 元，仅 8% 在 10–30 元之间。充电本身是「低单价、高频刚需」的消费，用户对价格敏感，却仍有 <strong>85% 愿意为预约支付 0.5–1 元</strong>。</p>
+
+    <figure>
+      <img src="assets/fig1_behavior.png" alt="充电频率、充电时段与月均花费统计图表">
+      <figcaption>图 1　充电行为分布：(a) 充电频率 (Q3)、(b) 充电时段 (Q4，多选)、(c) 月均花费 (Q14)</figcaption>
+    </figure>
+
+    <h3>总结核心痛点</h3>
+    <ol class="points">
+      <li><strong>「白跑」是最普遍的挫败体验。</strong>部分用户几乎每周都在经历一次无效出行。白跑同时消耗了时间、体力和情绪，是用户最先抱怨、也最容易被产品解决的痛点。</li>
+      <li><strong>对现有桩数量的满意度偏低。</strong>用户评价充电桩数量偏低，但结合白跑情况看，他们真正不满的是充电桩的<em>可用性</em>。有桩却充不上，感受上等同于没有桩。</li>
+      <li><strong>信息渠道原始，用户「纯靠运气」。</strong>用户不是不知道哪里有充电桩，而是无法知道此刻有没有空位。</li>
+    </ol>
+  </section>
+
+  <!-- 三 -->
+  <section id="s3">
+    <h2>三、访谈数据分析与亲和图</h2>
+    <p>根据问卷与访谈结果，我们最终整理出十几条原始素材，作为亲和图的输入。</p>
+
+    <div class="step">
+      <span class="step-no">1</span><span class="step-title">原始数据提取</span>
+      <p style="margin-top:8px">首先，将访谈记录拆解为独立的观点或事实，写在便签上。</p>
+      <figure>
+        <img src="assets/fig2_notes_raw.jpg" alt="散落在桌面上的手写原始便签">
+        <figcaption>图 2　原始素材便签：每条便签记录一个独立观点或事实</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-no">2</span><span class="step-title">进行亲和排序与创建主题标签</span>
+      <p style="margin-top:8px">将内容相似、相关的便签移动到一起，形成一个小组，然后为每一个小组创建一个新的便利贴，即「主题标签」。这个标签应该能精准地概括该组所有便利贴的核心思想。</p>
+      <figure>
+        <img src="assets/fig3_notes_grouped.jpg" alt="墙面上按主题分列排布的手写便签">
+        <figcaption>图 3　亲和排序：便签按内容相似性聚拢成组，并生成主题标签</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-no">3</span><span class="step-title">绘制数字版亲和图</span>
+      <figure style="margin-top:12px">
+        <img src="assets/fig4_affinity.png" alt="四个主题分组的数字版亲和图">
+        <figcaption>图 4　数字版亲和图：设备体验差 / 对核心功能的迫切需求 / 寻桩过程低效 / 对安全与责任的顾虑</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 四 -->
+  <section id="s4">
+    <h2>四、数据总结</h2>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>主题</th><th>条数</th><th>核心内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>设备体验差</td><td>3</td><td>硬件不可靠 + 人为干扰（桩是坏的、插头被拔且不复位）</td></tr>
+          <tr><td>对核心功能的迫切需求</td><td>4</td><td>实时状态可见、预约、准确空桩地图、快速查看</td></tr>
+          <tr><td>寻桩过程低效</td><td>3</td><td>信息缺失导致的时间浪费</td></tr>
+          <tr><td>对安全与责任的顾虑</td><td>2</td><td>事故无人担责、密集布桩隐患</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>主要结论</h3>
+    <ol class="points">
+      <li><strong>用户抱怨的是「不知道哪个能用」。</strong>12 条里 7 条指向信息不可见（空桩地图、插座状态、实时提醒、异常提醒、预约）。问题的本质是信息获取难，不是容量问题。</li>
+      <li><strong>用户有自己的需求清单。</strong>用户提出了「实时提醒」「预约充电」「实时准确的空桩地图」「快速查看插座状态」等需求，设计上应当照单实现。</li>
+      <li><strong>用户存在对安全与责任的顾虑。</strong>用户在意公共秩序维护以及责任划分等问题，设计产品时应注意。</li>
+    </ol>
+
+    <h3>对设计的启示</h3>
+    <div class="insights">
+      <div class="insight">
+        <div class="idx">1</div>
+        <p>实时空桩地图与插座状态查看，解决「看不见」的问题。</p>
+      </div>
+      <div class="insight">
+        <div class="idx">2</div>
+        <p>充电完成与异常中断实时提醒，让「被拔插头」从被动发现变成主动感知。</p>
+      </div>
+      <div class="insight">
+        <div class="idx">3</div>
+        <p>预约与占位机制，解决「白跑一趟」和抢桩行为。</p>
+      </div>
+      <div class="insight">
+        <div class="idx">4</div>
+        <p>故障桩上报与巡检，降低安全风险。</p>
+      </div>
+    </div>
+
+    <div class="quote">十二条素材最终收敛为一句话：用户要的不是更多的桩，而是「此刻哪个桩能用」的确定性。</div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">人机交互实验课作业 5 · 数据分析　|　校园电动车充电桩预约与共享平台</div>
+</footer>
+
+</body>
+</html>
